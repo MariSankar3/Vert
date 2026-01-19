@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function SignUpPage() {
   return (
-    <div className="min-h-screen grid lg:grid-cols-2">
+    <div className="min-h-screen grid lg:grid-cols-2 bg-[#d8d8d8]">
       <HeroSection />
       <SignUpForm />
     </div>

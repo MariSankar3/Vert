@@ -10,7 +10,7 @@ export function SignInForm() {
   const [showtypePassword, setShowtypePassword] = useState(false)
 
   return (
-    <div className="bg-[#121212] flex items-center justify-center p-8 lg:p-16">
+    <div className="bg-[#121212] flex items-center justify-center p-8 lg:p-16 rounded-[10px]">
       <div className="w-full max-w-md space-y-8">
         <div className="space-y-2">
           <h2 className="text-4xl font-bold text-white">Welcome!</h2>

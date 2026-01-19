@@ -12,9 +12,63 @@ export function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false)
   const [showRetypePassword, setShowRetypePassword] = useState(false)
   const [selectedRole, setSelectedRole] = useState<string | null>(null)
+  const [agreeTerms, setAgreeTerms] = useState(false)
+  const [formData, setFormData] = useState({
+  sebi: "",
+  email: "",
+  phone: "",
+  password: "",
+  confirmPassword: "",
+})
+
+const [errors, setErrors] = useState<Record<string, string>>({})
+const handleChange = (key: string, value: string) => {
+  setFormData(prev => ({ ...prev, [key]: value }))
+  setErrors(prev => ({ ...prev, [key]: "" })) // clear error on typing
+}
+const validateForm = () => {
+  const newErrors: Record<string, string> = {}
+
+  if (!/^(INA|INH)\d{9}$/.test(formData.sebi)) {
+    newErrors.sebi = "Invalid SEBI number (INA/INH + 9 digits)"
+  }
+
+  if (!/^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(formData.email)) {
+    newErrors.email = "Enter a valid Gmail address"
+  }
+
+  if (!/^[6-9]\d{9}$/.test(formData.phone)) {
+    newErrors.phone = "Enter valid 10-digit mobile number"
+  }
+  
+
+
+  if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(formData.password)) {
+    newErrors.password =
+      "Password must be 8+ chars, include uppercase, lowercase & number"
+  }
+
+  if (formData.password !== formData.confirmPassword) {
+    newErrors.confirmPassword = "Passwords do not match"
+  }
+
+  if (!selectedRole) {
+    newErrors.role = "Please select a role"
+  }
+
+  if (!agreeTerms) {
+  newErrors.terms = "You must agree to the Terms & Conditions"
+}
+
+
+  setErrors(newErrors)
+  return Object.keys(newErrors).length === 0
+  
+}
+
 
   return (
-    <div className="bg-[#121212] flex items-center justify-center p-8 lg:p-16 lg:h-screen lg:overflow-y-auto">
+    <div className="bg-[#121212] flex items-center rounded-[10px] justify-center p-8 lg:p-16 lg:h-screen lg:overflow-y-auto">
       <div className="w-full max-w-md space-y-6">
         <div className="space-y-2 lg:mt-100">
           <h2 className="text-4xl font-bold text-white">Welcome!</h2>
@@ -35,10 +89,19 @@ export function SignUpForm() {
               Signup
             </button>
           </div>
+           {errors.role && (
+  <p className="text-red-500 text-xs mb-2">
+    {errors.role}
+  </p>
+)}
 
           <div className="grid grid-cols-2 gap-4">
             <button
-              onClick={() => setSelectedRole("research")}
+              onClick={() => {
+  setSelectedRole("research")
+  setErrors(prev => ({ ...prev, role: "" }))
+}}
+              
               className={cn(
                 "p-6 rounded-3xl border-2 transition-all text-left",
                 selectedRole === "research" ? "bg-white border-white" : "bg-white border-[#344054]",
@@ -113,10 +176,16 @@ export function SignUpForm() {
 
 
                 <input
-                  type="email"
+                  type=""
+                    value={formData.sebi}
+  onChange={(e) => handleChange("sebi", e.target.value)}
                   className="text-base text-[#121212] placeholder:text-[#cccccc] outline-none"
                   placeholder="INA0000xxxxx or INH0000xxxxx"
                 />
+                {errors.sebi && (
+  <p className="text-red-500 text-xs mt-1">{errors.sebi}</p>
+)}
+
               </div>
 
 
@@ -132,10 +201,15 @@ export function SignUpForm() {
 
 
                 <input
+                  value={formData.email}
+                  onChange={(e) => handleChange("email", e.target.value)}
                   type="email"
                   className="text-base text-[#121212] placeholder:text-[#cccccc] outline-none"
                   placeholder="x.xxx@domainname.com"
                 />
+                {errors.email && (
+  <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+        )}
               </div>
 
 
@@ -151,10 +225,15 @@ export function SignUpForm() {
 
 
                 <input
-                  type="email"
+                  type="tel"
+                  value={formData.phone}
+                  onChange={(e) => handleChange("phone", e.target.value)}
                   className="text-base text-[#121212] placeholder:text-[#cccccc] outline-none"
                   placeholder="91761 12345"
                 />
+                {errors.phone && (
+                <p className="text-red-500 text-xs mt-1">{errors.phone}</p>
+                )}
               </div>
 
 
@@ -163,26 +242,6 @@ export function SignUpForm() {
                 <div className="h-10 border-r border-[#A8A8A8] ml-3"></div>
               </div>
             </div>
-            <div className="relative mt-8">
-              <div className="h-20 rounded-full bg-white pl-18 border border-[#E0E0E0] px-16 flex flex-col justify-center">
-
-                <label className="text-sm text-[#888888] leading-none">Mobile Number</label>
-
-
-                <input
-                  type="email"
-                  className="text-base text-[#121212] placeholder:text-[#cccccc] outline-none"
-                  placeholder="91761 12345"
-                />
-              </div>
-
-
-              <div className="absolute left-5 top-1/2 -translate-y-1/2 flex items-center h-full">
-                {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                <div className="h-10 border-r border-[#A8A8A8] ml-3"></div>
-              </div>
-            </div>
-
 
             <div className="relative mt-8">
 
@@ -192,9 +251,14 @@ export function SignUpForm() {
 
                 <input
                   type={showRetypePassword ? "text" : "password"}
+                  value={formData.password}
+                  onChange={(e) => handleChange("password", e.target.value)}
                   className="text-base text-[#121212] placeholder:text-[#cccccc] outline-none"
                   placeholder="Enter Password"
                 />
+                {errors.password && (
+  <p className="text-red-500 text-xs mt-1">{errors.password}</p>
+)}
               </div>
 
               <div className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center h-full">
@@ -224,9 +288,14 @@ export function SignUpForm() {
 
                 <input
                   type={showRetypePassword ? "text" : "password"}
+                  value={formData.confirmPassword}
+                  onChange={(e) => handleChange("confirmPassword", e.target.value)}
                   className="text-base text-[#121212] placeholder:text-[#cccccc] outline-none"
                   placeholder="Retype Password"
                 />
+                {errors.confirmPassword && (
+  <p className="text-red-500 text-xs mt-1">{errors.confirmPassword}</p>
+)}
               </div>
 
               <div className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center h-full">
@@ -252,16 +321,35 @@ export function SignUpForm() {
             <div className="flex items-center gap-2 mt-8">
               <Checkbox
                 id="terms"
+                checked={agreeTerms}
+  onCheckedChange={(value) => {
+    setAgreeTerms(Boolean(value))
+    setErrors(prev => ({ ...prev, terms: "" }))
+  }}
                 className="border-white data-[state=checked]:bg-[#a7e55c] data-[state=checked]:border-[#a7e55c]"
               />
+
               <label htmlFor="terms" className="text-sm text-white cursor-pointer">
                 Agree all <span className="text-[#4454DD] underline-none">T&C</span>
               </label>
+              
             </div>
+             {errors.terms && (
+  <p className="text-red-500 text-xs mt-1">
+    {errors.terms}
+  </p>
+)}
           </div>
           
         </div>
-            <Button className="w-full h-14 rounded-full bg-[#DBF900] text-black font-semibold text-lg hover:bg-[#95d04a]">
+            <Button 
+             onClick={() => {
+    if (validateForm()) {
+      console.log("Form valid:", formData)
+      // API call here
+    }
+  }}
+            className="w-full h-14 rounded-full bg-[#DBF900] text-black font-semibold text-lg hover:bg-[#95d04a]">
               Continue
             </Button>
       </div>
