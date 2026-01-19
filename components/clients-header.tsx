@@ -1,9 +1,21 @@
+"use client"
 import Image from "next/image"
 import Link from "next/link"
 import { Search, Upload } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
-export function ClientsHeader() {
+type ClientsHeaderProps = {
+  activeTab: "home" | "chat" | "connections" | "settings"
+}
+
+export function ClientsHeader({ activeTab }: ClientsHeaderProps) {
+  const getClass = (tab: string) =>
+    `px-8 py-3 rounded-full font-medium transition ${
+      activeTab === tab
+        ? "bg-[#A7E55C] text-[#121212] font-semibold"
+        : "text-white hover:bg-[#d6d6d6] hover:text-[#121212]"
+    }`
+
   return (
     <header className="bg-[#121212] border-b border-[#d0d5dd]">
       <div className="container mx-auto px-6 py-4">
@@ -11,28 +23,19 @@ export function ClientsHeader() {
           <div className="flex items-center gap-8">
             <Image src="/verita_logo_white.png" alt="Ethereal Design Logo" width={48} height={48} />
             <nav className="flex items-center gap-2 h-[54px] border border-[#888888] rounded-full px-2">
-              <Link
-                href="/home"
-                className="px-8 py-3 rounded-full bg-[#A7E55C] text-[#121212] font-semibold hover:bg-[#95d04a] transition"
-              >
+              <Link href="/dashboard" className={getClass("home")}>
                 Home
               </Link>
-              <Link
-                href="/chat"
-                className="px-8 py-3 rounded-full text-[#FFFFFF] font-medium hover:bg-[#d6d6d6] hover:text-[#121212] transition"
-              >
+
+              <Link href="/chat" className={getClass("chat")}>
                 Chat
               </Link>
-              <Link
-                href="/connections"
-                className="px-8 py-3 rounded-full text-[#FFFFFF] font-medium hover:bg-[#d6d6d6] hover:text-[#121212] transition"
-              >
+
+              <Link href="/connections" className={getClass("connections")}>
                 Connections
               </Link>
-              <Link
-                href="/settings"
-                className="px-8 py-3 rounded-full text-[#FFFFFF] font-medium hover:bg-[#d6d6d6] hover:text-[#121212] transition"
-              >
+
+              <Link href="/settings" className={getClass("settings")}>
                 Settings
               </Link>
               <div className="h-10 w-10 rounded-full bg-[#88888866] border border-[#888888] flex items-center justify-center">

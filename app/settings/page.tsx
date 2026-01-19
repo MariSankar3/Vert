@@ -6,12 +6,11 @@ export const metadata: Metadata = {
   description: "Manage your clients",
 }
 
-export default function Chat() {
+export default function Settings() {
   return (
     <div className="min-h-screen bg-[#f6f6f6]">
-      <ClientsHeader activeTab="chat"/>
+      <ClientsHeader activeTab="settings"/>
       <main className="container mx-auto px-6 py-8">
-     
       </main>
     </div>
   )

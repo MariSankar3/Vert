@@ -94,7 +94,7 @@ export function DashboardCards({
           >
             <Search className="h-5 w-5" />
           </Button>
-          <Link href="/clients">
+          <Link href="/newclients">
             <Button className="h-10 px-6 mr-1 rounded-full bg-[#a7e55c] text-[#121212] font-semibold hover:bg-[#95d04a]">
               + Add Client
             </Button>

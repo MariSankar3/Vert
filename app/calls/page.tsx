@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export default function CallsPage() {
   return (
     <div className="min-h-screen bg-[#f6f6f6]">
-      <ClientsHeader />
+      <ClientsHeader activeTab="home" />
       <main className="container mx-auto px-6 py-8">
         {/* <DashboardCards title={""} value={""} label={""} growth={""} amount={""} /> */}
         <CallPage />
