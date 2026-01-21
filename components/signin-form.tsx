@@ -1,17 +1,84 @@
 "use client"
+
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Eye, EyeOff, Mail, Lock } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
+import { Check } from "lucide-react"
+
 
 export function SignInForm() {
+  const router = useRouter()
+  const [rememberMe, setRememberMe] = useState(false)
   const [showtypePassword, setShowtypePassword] = useState(false)
+  const [email, setEmail] = useState("")
+  const [isEmailValid, setIsEmailValid] = useState(false)
+  const [errors, setErrors] = useState<{ email?: string; password?: string }>({})
+  const [password, setPassword] = useState("")
+  const isDisabled = email.trim() === "" || password.trim() === ""
+  const [formData, setFormData] = useState({
+    email: "",
+  })
+
+  const validateEmail = (value: string) =>
+    /^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(value)
+
+  // const handleSignIn = () => { 
+  //   const newErrors: { email?: string } = {}
+
+  //   if (!validateEmail(email)) {
+  //     newErrors.email = "Enter a valid Gmail address"
+  //   }
+
+  //   setErrors(newErrors)
+
+  //   if (Object.keys(newErrors).length > 0) return
+
+  //   // ✅ Proceed with API call
+  //   console.log("Valid email, login allowed")
+  // }
+
+
+
+  //testing purpose only
+  const handleSignIn = () => {
+    const newErrors: { email?: string; password?: string } = {}
+
+    if (email !== "admin_ethereal@gmail.com") {
+      newErrors.email = "Invalid email"
+    }
+
+    if (password !== "Test@123") {
+      newErrors.password = "Incorrect password"
+    }
+
+    setErrors(newErrors)
+
+    if (Object.keys(newErrors).length > 0) return
+
+    // ✅ REMEMBER DEVICE
+    if (rememberMe) {
+      localStorage.setItem("auth", "true")
+      localStorage.setItem("email", email)
+    }
+
+    // 🚀 Fast programmatic navigation
+    router.push("/dashboard")
+  }
+  const savedEmail =
+    typeof window !== "undefined"
+      ? localStorage.getItem("email")
+      : null
+
+
+
 
   return (
     <div className="bg-[#121212] flex items-center justify-center p-8 lg:p-16 rounded-[10px]">
-      <div className="w-full max-w-md space-y-8">
+      <div className="w-full max-w-md space-y-3">
         <div className="space-y-2">
           <h2 className="text-4xl font-bold text-white">Welcome!</h2>
           <p className="text-[#FFFFFF] leading-relaxed">
@@ -34,17 +101,38 @@ export function SignInForm() {
 
           <div className="space-y-4">
             <div className="relative mt-8">
-              <div className="h-20 rounded-full bg-white pl-18 border border-[#E0E0E0] px-16 flex flex-col justify-center">
+              <div className="h-20 rounded-full bg-white pl-18 border border-slate-300 px-16 flex flex-col justify-center">
 
                 <label className="text-sm text-[#888888] leading-none">Email</label>
 
-
                 <input
                   type="email"
-                  className="text-base text-[#121212] placeholder:text-[#cccccc] outline-none"
-                  placeholder="x.xxx@domainname.com"
+                  list="saved-emails"
+                  value={email}
+                  onChange={(e) => {
+                    const value = e.target.value
+                    setEmail(value)
+
+                    const valid = /^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(value)
+                    setIsEmailValid(valid)
+
+                    setErrors((prev) => ({ ...prev, email: undefined }))
+                  }}
+                  name="email"
+                  autoComplete="email"
+                  className="text-base text-[#121212] placeholder:text-[#cccccc] outline-none bg-transparent pr-10"
+                  placeholder="x.xxx@gmail.com"
                 />
+                {isEmailValid && (
+                  <div className="absolute right-5 top-1/2 -translate-y-1/2">
+                    <Check className="h-6 w-6 text-green-500" />
+                  </div>
+                )}
+                {errors.email && (
+                  <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+                )}
               </div>
+
 
 
               <div className="absolute left-5 top-1/2 -translate-y-1/2 flex items-center h-full">
@@ -55,15 +143,22 @@ export function SignInForm() {
 
             <div className="relative mt-8">
 
-              <div className="h-20 rounded-full bg-white border border-[#E0E0E0] px-20 flex flex-col justify-center">
+              <div className="h-20 rounded-full bg-white border border-slate-300 px-20 flex flex-col justify-center">
 
                 <label className="text-sm text-[#888888] leading-none">Password</label>
 
                 <input
                   type={showtypePassword ? "text" : "password"}
-                  className="text-base text-[#121212] placeholder:text-[#cccccc] outline-none"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="text-base text-[#121212] placeholder:text-[#cccccc] outline-none bg-transparent"
                   placeholder="Enter Password"
                 />
+                {errors.password && (
+                  <p className="text-red-500 text-xs mt-1">{errors.password}</p>
+                )}
+
+
               </div>
 
               <div className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center h-full">
@@ -85,19 +180,34 @@ export function SignInForm() {
 
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 px-5">
               <Checkbox
-                id="terms"
-                className="border-white data-[state=checked]:bg-[#a7e55c] data-[state=checked]:border-[#a7e55c]"
+                id="remember"
+                checked={rememberMe}
+                onCheckedChange={(value) => setRememberMe(Boolean(value))}
+                className="cursor-pointer border-white data-[state=checked]:bg-[#a7e55c] data-[state=checked]:border-[#a7e55c]"
               />
-              <label htmlFor="terms" className="text-sm text-white cursor-pointer">
-                Agree all <span className="text-[#4454DD] underline">T&C</span>
+              <label htmlFor="remember" className="text-sm text-white cursor-pointer">
+                Remember this device
               </label>
             </div>
 
-            <Button className="w-full h-14 rounded-full bg-[#DBF900] text-black font-semibold text-lg hover:bg-[#95d04a]">
-              Continue
+            <Button
+              disabled={isDisabled}
+              onClick={handleSignIn}
+              className={`
+            w-full h-14 rounded-full font-semibold text-lg cursor-pointer
+            ${isDisabled
+                  ? "bg-[#DBF900]/100 text-black cursor-not-allowed"
+                  : "bg-[#DBF900] hover:bg-[#95d04a] text-black"}
+            `}>
+             Continue
             </Button>
+            <div>
+              <Button className="flex justify-center align-center w-full cursor-pointer">
+                Forget Password ?
+              </Button>
+            </div>
 
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
@@ -109,8 +219,8 @@ export function SignInForm() {
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <Button variant="outline" className="h-14 rounded-lg bg-white hover:bg-[#f6f6f6] border-0">
-                <svg className="h-5 w-5" viewBox="0 0 24 24">
+              <Button variant="outline" className="cursor-pointer h-14 rounded-lg bg-white hover:bg-[#f6f6f6] border-0">
+                <svg className="h-9 w-9" viewBox="0 0 24 24">
                   <path
                     fill="#4285F4"
                     d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -129,8 +239,8 @@ export function SignInForm() {
                   />
                 </svg>
               </Button>
-              <Button variant="outline" className="h-14 rounded-lg bg-white hover:bg-[#f6f6f6] border-0">
-                <svg className="h-6 w-6" fill="#000000" viewBox="0 0 24 24">
+              <Button variant="outline" className="cursor-pointer h-14 rounded-lg bg-white hover:bg-[#f6f6f6] border-0">
+                <svg className="h-9 w-9" fill="#000000" viewBox="0 0 24 24">
                   <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" />
                 </svg>
               </Button>

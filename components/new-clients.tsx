@@ -1,16 +1,18 @@
 "use client"
 
-import { EyeIcon} from "lucide-react"
+import { EyeIcon, Link} from "lucide-react"
 import { useState } from "react"
 
 export function NewClients() {
   const [] = useState("all")
 
   return (
-    <div className="min-h-screen bg-[#f7f7f7]">
+    <div className="max-h-screen bg-[#f7f7f7]">
       <div className="flex items-center justify-between px-2 h-14 rounded-full">
         <div className="flex items-center gap-4">
+          <Link href="/dashboard">
           <button className="text-2xl h-10 w-[40px] rounded-full font-bold border-3 border-[#000] text-black bg-white ml-4">&#8592;</button>
+          </Link>
           <h1 className="text-lg">NEW CLIENTS</h1>
         </div>
         <button className="px-10 py-2 rounded-full font-semibold bg-lime-300 text-black cursor-not-allowed">
@@ -18,7 +20,7 @@ export function NewClients() {
         </button>
       </div>
 
-      <div className="w-full min-h-screen flex items-center justify-center bg-gray-50 p-4">
+      <div className="w-full flex items-center justify-center bg-gray-50 p-4">
       <div className="rounded-xl max-w-6xl md:p-10 flex flex-col md:flex-row gap-8">
 
         <div className="flex-1 space-y-5">

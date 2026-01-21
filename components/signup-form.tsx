@@ -2,80 +2,99 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { Eye, EyeOff, Mail, Lock, FileText, User } from "lucide-react"
+import { Eye, EyeOff, Mail, Lock, FileText, User, Phone, IdCard, Check } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 import { cn } from "@/lib/utils"
 import { Button } from "./ui/button"
+// import {X} from "lucide-react"
 
 export function SignUpForm() {
+  const [email, setEmail] = useState("")
+  const [isEmailValid, setIsEmailValid] = useState(false)
+  const [mobile, setMobile] = useState("")
+  const [isMobileValid, setIsMobileValid] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [showRetypePassword, setShowRetypePassword] = useState(false)
   const [selectedRole, setSelectedRole] = useState<string | null>(null)
   const [agreeTerms, setAgreeTerms] = useState(false)
+  const [sebiReg, setSebiReg] = useState("")
+  const [isSebiValid, setIsSebiValid] = useState(false)
+  const [showTerms, setShowTerms] = useState(false)
   const [formData, setFormData] = useState({
-  sebi: "",
-  email: "",
-  phone: "",
-  password: "",
-  confirmPassword: "",
-})
+    password: "",
+    confirmPassword: "",
+  })
 
-const [errors, setErrors] = useState<Record<string, string>>({})
-const handleChange = (key: string, value: string) => {
-  setFormData(prev => ({ ...prev, [key]: value }))
-  setErrors(prev => ({ ...prev, [key]: "" })) // clear error on typing
-}
-const validateForm = () => {
-  const newErrors: Record<string, string> = {}
+  const validateSebi = (value: string) =>
+    /^IN[A-Z]{1,3}\d{6}$/.test(value)
 
-  if (!/^(INA|INH)\d{9}$/.test(formData.sebi)) {
-    newErrors.sebi = "Invalid SEBI number (INA/INH + 9 digits)"
+  const validateMobile = (value: string) =>
+    /^[6-9]\d{9}$/.test(value)
+
+  const validateGmail = (value: string) =>
+    /^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(value)
+
+
+  const [errors, setErrors] = useState<Record<string, string>>({})
+  const handleChange = (key: string, value: string) => {
+    setFormData(prev => ({ ...prev, [key]: value }))
+    setErrors(prev => ({ ...prev, [key]: "" })) // clear error on typing
+  }
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {}
+
+    if (!isSebiValid) {
+      newErrors.sebi = "Invalid SEBI number (Format: INH / INA + 6 digits)"
+    }
+
+    if (!isEmailValid) {
+      newErrors.email = "Enter a valid Gmail address"
+    }
+
+    if (!isMobileValid) {
+      newErrors.phone = "Enter valid 10-digit mobile number"
+    }
+
+    if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(formData.password)) {
+      newErrors.password =
+        "Password must be 8+ chars, include uppercase, lowercase & number"
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match"
+    }
+
+    if (!selectedRole) {
+      newErrors.role = "Please select a role"
+    }
+
+    if (!agreeTerms) {
+      newErrors.terms = "You must agree the Terms & Conditions"
+    }
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
   }
 
-  if (!/^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(formData.email)) {
-    newErrors.email = "Enter a valid Gmail address"
-  }
-
-  if (!/^[6-9]\d{9}$/.test(formData.phone)) {
-    newErrors.phone = "Enter valid 10-digit mobile number"
-  }
-  
-
-
-  if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(formData.password)) {
-    newErrors.password =
-      "Password must be 8+ chars, include uppercase, lowercase & number"
-  }
-
-  if (formData.password !== formData.confirmPassword) {
-    newErrors.confirmPassword = "Passwords do not match"
-  }
-
-  if (!selectedRole) {
-    newErrors.role = "Please select a role"
-  }
-
-  if (!agreeTerms) {
-  newErrors.terms = "You must agree to the Terms & Conditions"
-}
-
-
-  setErrors(newErrors)
-  return Object.keys(newErrors).length === 0
-  
-}
-
+  const canSubmit =
+    sebiReg &&
+    email &&
+    mobile &&
+    formData.password &&
+    formData.confirmPassword
 
   return (
-    <div className="bg-[#121212] flex items-center rounded-[10px] justify-center p-8 lg:p-16 lg:h-screen lg:overflow-y-auto">
-      <div className="w-full max-w-md space-y-6">
-        <div className="space-y-2 lg:mt-100">
+    // <div className="bg-[#121212] flex items-center rounded-[10px] justify-center p-8 lg:p-16 lg:h-screen lg:overflow-y-auto">
+    //   <div className="w-full max-w-md space-y-6">
+    <div className="bg-[#121212] flex items-center justify-center p-8 lg:p-16 rounded-[10px] lg:h-screen lg:overflow-y-auto scrollbar-hide">
+      <div className="w-full max-w-md space-y-3">
+        <div className="space-y-2 mt-90">
           <h2 className="text-4xl font-bold text-white">Welcome!</h2>
           <p className="text-[#FFFFFF] leading-relaxed">
             Upgrade to zero-friction compliance. Easy records, simple audits
           </p>
-        </div> 
+        </div>
 
         <div className="space-y-6">
           <div className="flex rounded-full bg-white p-1">
@@ -89,19 +108,19 @@ const validateForm = () => {
               Signup
             </button>
           </div>
-           {errors.role && (
-  <p className="text-red-500 text-xs mb-2">
-    {errors.role}
-  </p>
-)}
+          {errors.role && (
+            <p className="text-red-500 text-xs mb-2">
+              {errors.role}
+            </p>
+          )}
 
           <div className="grid grid-cols-2 gap-4">
             <button
               onClick={() => {
-  setSelectedRole("research")
-  setErrors(prev => ({ ...prev, role: "" }))
-}}
-              
+                setSelectedRole("research")
+                setErrors(prev => ({ ...prev, role: "" }))
+              }}
+
               className={cn(
                 "p-6 rounded-3xl border-2 transition-all text-left",
                 selectedRole === "research" ? "bg-white border-white" : "bg-white border-[#344054]",
@@ -175,22 +194,42 @@ const validateForm = () => {
                 <label className="text-sm text-[#888888] leading-none">SEBI Registration Number</label>
 
 
+
                 <input
-                  type=""
-                    value={formData.sebi}
-  onChange={(e) => handleChange("sebi", e.target.value)}
-                  className="text-base text-[#121212] placeholder:text-[#cccccc] outline-none"
+                  type="text"
+                  value={sebiReg}
+                  onChange={(e) => {
+                    const value = e.target.value.toUpperCase()
+                    setSebiReg(value)
+
+                    const valid = validateSebi(value)
+                    setIsSebiValid(valid)
+
+                    if (valid) {
+                      setErrors(prev => ({ ...prev, sebi: "" }))
+                    }
+                  }}
+
                   placeholder="INA0000xxxxx or INH0000xxxxx"
+                  className="text-base text-[#121212] placeholder:text-[#cccccc] outline-none"
                 />
+
+                {isSebiValid && (
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                    <Check className="h-5 w-5 text-green-500" />
+                  </div>
+                )}
+
+
                 {errors.sebi && (
-  <p className="text-red-500 text-xs mt-1">{errors.sebi}</p>
-)}
+                  <p className="text-red-500 text-xs mt-1">{errors.sebi}</p>
+                )}
 
               </div>
 
 
               <div className="absolute left-5 top-1/2 -translate-y-1/2 flex items-center h-full">
-                <Mail className="h-6 w-6 text-[#616161]" />
+                <IdCard className="h-6 w-6 text-[#616161]" />
                 <div className="h-10 border-r border-[#A8A8A8] ml-3"></div>
               </div>
             </div>
@@ -201,15 +240,33 @@ const validateForm = () => {
 
 
                 <input
-                  value={formData.email}
-                  onChange={(e) => handleChange("email", e.target.value)}
                   type="email"
-                  className="text-base text-[#121212] placeholder:text-[#cccccc] outline-none"
+                  value={email}
+                  onChange={(e) => {
+                    const value = e.target.value.toLowerCase()
+                    setEmail(value)
+
+                    const valid = validateGmail(value)
+                    setIsEmailValid(valid)
+
+                    if (valid) {
+                      setErrors(prev => ({ ...prev, email: "" }))
+                    }
+                  }}
+
                   placeholder="x.xxx@domainname.com"
+                  className="text-base text-[#121212] placeholder:text-[#cccccc] outline-none"
                 />
+
+                {/* ✅ Green tick */}
+                {isEmailValid && (
+                  <div className="absolute right-5 top-1/2 -translate-y-1/2">
+                    <Check className="h-5 w-5 text-green-500" />
+                  </div>
+                )}
                 {errors.email && (
-  <p className="text-red-500 text-xs mt-1">{errors.email}</p>
-        )}
+                  <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+                )}
               </div>
 
 
@@ -223,22 +280,38 @@ const validateForm = () => {
 
                 <label className="text-sm text-[#888888] leading-none">Mobile Number</label>
 
-
                 <input
                   type="tel"
-                  value={formData.phone}
-                  onChange={(e) => handleChange("phone", e.target.value)}
-                  className="text-base text-[#121212] placeholder:text-[#cccccc] outline-none"
+                  value={mobile}
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/\D/g, "")
+                    setMobile(value)
+
+                    const valid = validateMobile(value)
+                    setIsMobileValid(valid)
+
+                    if (valid) {
+                      setErrors(prev => ({ ...prev, phone: "" }))
+                    }
+                  }}
+
                   placeholder="91761 12345"
+                  className="text-base text-[#121212] placeholder:text-[#cccccc] outline-none"
                 />
+
+                {isMobileValid && (
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                    <Check className="h-5 w-5 text-green-500" />
+                  </div>
+                )}
                 {errors.phone && (
-                <p className="text-red-500 text-xs mt-1">{errors.phone}</p>
+                  <p className="text-red-500 text-xs mt-1">{errors.phone}</p>
                 )}
               </div>
 
 
               <div className="absolute left-5 top-1/2 -translate-y-1/2 flex items-center h-full">
-                <Mail className="h-6 w-6 text-[#616161]" />
+                <Phone className="h-6 w-6 text-[#616161]" />
                 <div className="h-10 border-r border-[#A8A8A8] ml-3"></div>
               </div>
             </div>
@@ -250,15 +323,15 @@ const validateForm = () => {
                 <label className="text-sm text-[#888888] leading-none">Password</label>
 
                 <input
-                  type={showRetypePassword ? "text" : "password"}
+                  type={showPassword ? "text" : "password"}
                   value={formData.password}
                   onChange={(e) => handleChange("password", e.target.value)}
                   className="text-base text-[#121212] placeholder:text-[#cccccc] outline-none"
                   placeholder="Enter Password"
                 />
                 {errors.password && (
-  <p className="text-red-500 text-xs mt-1">{errors.password}</p>
-)}
+                  <p className="text-red-500 text-xs mt-1">{errors.password}</p>
+                )}
               </div>
 
               <div className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center h-full">
@@ -268,7 +341,7 @@ const validateForm = () => {
 
               <button
                 type="button"
-                onClick={() => setShowRetypePassword(!showRetypePassword)}
+                onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-4 top-1/2 -translate-y-1/2 text-[#888888] hover:text-[#121212]"
               >
                 {showRetypePassword ? (
@@ -294,8 +367,8 @@ const validateForm = () => {
                   placeholder="Retype Password"
                 />
                 {errors.confirmPassword && (
-  <p className="text-red-500 text-xs mt-1">{errors.confirmPassword}</p>
-)}
+                  <p className="text-red-500 text-xs mt-1">{errors.confirmPassword}</p>
+                )}
               </div>
 
               <div className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center h-full">
@@ -322,37 +395,141 @@ const validateForm = () => {
               <Checkbox
                 id="terms"
                 checked={agreeTerms}
-  onCheckedChange={(value) => {
-    setAgreeTerms(Boolean(value))
-    setErrors(prev => ({ ...prev, terms: "" }))
-  }}
-                className="border-white data-[state=checked]:bg-[#a7e55c] data-[state=checked]:border-[#a7e55c]"
+                  disabled={!agreeTerms}
+                onCheckedChange={(value) => {
+                  setAgreeTerms(Boolean(value))
+                  setErrors(prev => ({ ...prev, terms: "" }))
+                }}
+                className="cursor-pointer border-white data-[state=checked]:bg-[#a7e55c] data-[state=checked]:border-[#a7e55c]"
               />
 
               <label htmlFor="terms" className="text-sm text-white cursor-pointer">
-                Agree all <span className="text-[#4454DD] underline-none">T&C</span>
+                Agree all
               </label>
-              
+              <button
+                type="button"
+                onClick={() => setShowTerms(true)}
+                className="text-[#4454DD] font-medium cursor-pointer"
+              >
+                T&C
+              </button>
+
+
             </div>
-             {errors.terms && (
-  <p className="text-red-500 text-xs mt-1">
-    {errors.terms}
-  </p>
-)}
+            {errors.terms && (
+              <p className="text-red-500 text-xs mt-1">
+                {errors.terms}
+              </p>
+            )}
           </div>
-          
+
         </div>
-            <Button 
-             onClick={() => {
-    if (validateForm()) {
-      console.log("Form valid:", formData)
-      // API call here
-    }
-  }}
-            className="w-full h-14 rounded-full bg-[#DBF900] text-black font-semibold text-lg hover:bg-[#95d04a]">
-              Continue
-            </Button>
+        <Button
+          onClick={() => {
+            if (validateForm()) {
+              console.log("Form valid:", formData)
+              // API call here
+            }
+          }}
+          disabled={!canSubmit}
+          // className="w-full h-14 rounded-full bg-[#DBF900] disabled:opacity-40 disabled:cursor-not-allowed">
+          className="w-full h-14 rounded-full bg-[#DBF900] text-black font-semibold text-lg hover:bg-[#95d04a] cursor-pointer">
+          Continue
+        </Button>
       </div>
+      {showTerms && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40  p-4">
+          <div className="w-[90vw] h-[90vh] bg-[#F2F4F7] rounded-[20px] flex flex-col shadow-2xl overflow-hidden relative border border-white/20">
+
+            {/* Close Button */}
+            <button
+              onClick={() => setShowTerms(false)}
+              className="absolute top-6 right-8 text-3xl font-light text-gray-400 hover:text-black transition-colors z-10 cursor-pointer"
+            >
+              ×
+            </button>
+
+            {/* Header - Centered as per image */}
+            <div className="pt-8 pb-4 flex justify-center">
+              <h2 className="text-2xl font-bold text-[#101828]">
+                Terms & Conditions
+              </h2>
+            </div>
+
+            {/* White Content Card */}
+            <div className="flex-1 overflow-hidden px-40 pb-4">
+              <div className="h-full bg-white rounded-[20px] shadow-sm flex flex-col">
+                {/* Scrollable Text Area */}
+                <div className="flex-1 overflow-y-auto px-10 py-10 text-[14px] text-gray-600 leading-relaxed custom-scrollbar">
+                  <div className="space-y-6">
+                    <p>
+                      This Agreement (“Agreement”) is made and entered into as of
+                      <span className="font-medium text-[#101828]"> 2025-10-22 </span>
+                      (the “Signing Date”) by and between:
+                    </p>
+
+                    <p>
+                      This SERVICE Agreement (“Agreement”) is made between
+                      <span className="font-medium text-[#101828]"> A and Y Market Research</span>,
+                      having its registered office at 512, Sun Avenue One, Ambawadi, Manekbag Shyamal Road
+                      (hereinafter referred to as “Service Provider” or “RA”) and
+                      <span className="font-medium text-[#101828]"> Suganth alagesan</span>,
+                      PAN: <span className="font-medium text-[#101828]">BNJPA5529D</span>,
+                      officially registered on Signalz.in (hereinafter referred to as “User”).
+                    </p>
+
+                    <p>
+                      The Service Provider and the User are hereinafter individually referred to
+                      as a “Party” and collectively referred to as the “Parties”.
+                    </p>
+
+                    <div className="pt-2">
+                      <h3 className="font-bold mb-3">1. DEFINITIONS:</h3>
+                      <div className="space-y-4">
+                        <p>A. “User” refers to any individual who avails services after consenting to this agreement.</p>
+                        <p>B. “Service Provider” is a SEBI-registered Research Analyst (RA) or Registered Investment Advisor (RIA).</p>
+                        <p>C. “Signalz” refers to the platform owned by Katalx Technologies Pvt Ltd, used by SEBI-
+                          registered RAs or RIAs for managing and delivering research services such as
+                          recommendations across asset class, educational content, webinars, facilitation of
+                          user KYC, digital signing of agreements and record keeping.</p>
+                        <p>6. DEFINITIONS:</p>
+                        <p>P. “User” refers to any individual who avails services after consenting to this
+                          agreement.</p>
+                        <p>Q. “Service Provider” is a SEBI-registered Research Analyst (RA) or Registered
+                          Investment Advisor (RIA).</p>
+                        <p>R. “Signalz” refers to the platform owned by Katalx Technologies Pvt Ltd, used by SEBI-
+                          registered RAs or RIAs for managing and delivering research services such as
+                          recommendations across asset class, educational content, webinars, facilitation of
+                          user KYC, digital signing of agreements and record keeping.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer - Exactly like the image button */}
+            <div className="pb-8 pt-2 flex justify-center">
+              <button
+                onClick={() => {
+                  setAgreeTerms(true);
+                  setShowTerms(false);
+                }}
+                className="flex items-center gap-3 px-8 py-3 bg-[#A8E65C] border-[2px] border-black rounded-full shadow-[0px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[1px] hover:shadow-[0px_1px_0px_0px_rgba(0,0,0,1)] transition-all active:translate-y-[2px] active:shadow-none cursor-pointer"
+              >
+                {/* <div className="w-5 h-5 bg-white border border-gray-300 rounded flex items-center justify-center">
+             <div className="w-3 h-3 bg-[#A8E65C] rounded-sm"></div>
+          </div> */}
+                <span className="text-black font-bold text-sm">
+                  Read and Agreed all
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
+
+
   )
 }

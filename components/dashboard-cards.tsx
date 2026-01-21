@@ -17,7 +17,7 @@ export function DashboardCards({
 
 
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      {/* <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <div className="h-12 w-12 rounded-full bg-[#fff] flex items-center justify-center">
             <Users className="h-6 w-6 text-black" />
@@ -55,7 +55,7 @@ export function DashboardCards({
         <div className="flex items-center gap-3 bg-[#000] h-[48px] rounded-full">
           <Button
             variant="outline"
-            className="h-10 px-6 rounded-full ml-1 bg-[#121212] border-1 text-white font-medium hover:bg-[#1d2939]"
+            className="h-10 px-6 rounded-full ml-1 bg-[#121212] border-1 text-white font-medium"
           >
             <Calendar className="h-4 w-4 mr-2" />
             22/10/25 - 30/10/25
@@ -100,8 +100,8 @@ export function DashboardCards({
             </Button>
           </Link>
         </div>
-      </div>
-      <h1 className="font-medium text-2xl">DASHBOARD</h1>
+      </div> */}
+      <h1 className="font-medium text-2xl mt-10">DASHBOARD</h1>
       <div className="flex gap-8 items-center">
         <div className="flex items-center gap-2">
           <p className="text-3xl font-semibold">231</p>

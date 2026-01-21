@@ -140,112 +140,25 @@ const statusColors: Record<string, string> = {
 export function ClientsTable() {
   const [activeTab, setActiveTab] = useState("all")
   const filteredClients = clients.filter((client) => {
-  if (activeTab === "all") return true
-  if (activeTab === "active") return client.status === "Active"
-  if (activeTab === "inactive") return client.status === "Inactive"
-  if (activeTab === "review") return client.status === "Review"
-  if (activeTab === "kycpending") return client.status === "KYC Pending"
-  if (activeTab === "riskprofile") return client.status === "Risk Profile"
-  return true
-})
-const counts = {
-  all: clients.length,
-  active: clients.filter(c => c.status === "Active").length,
-  inactive: clients.filter(c => c.status === "Inactive").length,
-  review: clients.filter(c => c.status === "Review").length,
-  kycpending: clients.filter(c => c.status === "KYC Pending").length,
-  riskprofile: clients.filter(c => c.status === "Risk Profile").length,
-}
+    if (activeTab === "all") return true
+    if (activeTab === "active") return client.status === "Active"
+    if (activeTab === "inactive") return client.status === "Inactive"
+    if (activeTab === "review") return client.status === "Review"
+    if (activeTab === "kycpending") return client.status === "KYC Pending"
+    if (activeTab === "riskprofile") return client.status === "Risk Profile"
+    return true
+  })
+  const counts = {
+    all: clients.length,
+    active: clients.filter(c => c.status === "Active").length,
+    inactive: clients.filter(c => c.status === "Inactive").length,
+    review: clients.filter(c => c.status === "Review").length,
+    kycpending: clients.filter(c => c.status === "KYC Pending").length,
+    riskprofile: clients.filter(c => c.status === "Risk Profile").length,
+  }
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className="h-12 w-12 rounded-full bg-[#000] flex items-center justify-center">
-            <Image
-              src="/dashboard_icon4.png"
-              alt="Dashboard Graph"
-              width={24}
-              height={24}
-              className="object-contain"
-            />
-          </div>
-          <div className="h-12 w-12 rounded-full bg-[#fff] flex items-center justify-center">
-
-            <Users className="h-6 w-6 text-black" />
-
-          </div>
-          <div className="h-12 w-12 rounded-full bg-[#fff] flex items-center justify-center">
-            <Image
-              src="/dashboard_icon3.png"
-              alt="Dashboard Graph"
-              width={24}
-              height={24}
-              className="object-contain"
-            />
-          </div>
-          <div className="h-12 w-12 rounded-full bg-[#fff] flex items-center justify-center">
-            <Image
-              src="/dashboard_icon2.png"
-              alt="Dashboard Graph"
-              width={24}
-              height={24}
-              className="object-contain"
-            />
-          </div>
-          <h1 className="text-2xl text-[#101828]">CLIENTS</h1>
-        </div>
-
-        <div className="flex items-center gap-3 bg-[#000] h-[48px] rounded-full">
-          <Button
-            variant="outline"
-            className="h-10 px-6 rounded-full ml-1 bg-[#121212] border-1 text-white font-medium hover:bg-[#1d2939]"
-          >
-            <Calendar className="h-4 w-4 mr-2" />
-            22/10/25 - 30/10/25
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            className="h-11 w-11 rounded-full bg-[#121212] border-1 text-white hover:bg-[#1d2939]"
-          >
-            <Filter className="h-5 w-5" />
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            className="h-11 w-11 rounded-full bg-[#121212] border-1 text-white hover:bg-[#1d2939]"
-          >
-            <Image
-              src="/dashboard_icon6.png"
-              alt="Dashboard Graph"
-              width={16}
-              height={18}
-              className="object-contain"
-            />
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            className="h-11 w-11 rounded-full bg-[#121212] border-1 text-white hover:bg-[#1d2939]"
-          >
-            <Download className="h-5 w-5" />
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            className="h-11 w-11 rounded-full bg-[#121212] border-1 text-white hover:bg-[#1d2939]"
-          >
-            <Search className="h-5 w-5" />
-          </Button>
-          <Link href="/newclients">
-            <Button className="h-10 px-6 mr-1 rounded-full bg-[#a7e55c] text-[#121212] font-semibold hover:bg-[#95d04a]">
-              + New Client
-            </Button>
-          </Link>
-        </div>
-      </div>
-
       <div className="bg-white space-y-6 mt-4 rounded-2xl border-1">
         <div className="flex items-center gap-3 mt-2 mb-2 pl-3">
           <button
@@ -255,7 +168,7 @@ const counts = {
               activeTab === "all" ? "bg-[#a7e55c] text-[#121212]" : "bg-[#e2e2e2] text-[#101828]",
             )}
           >
-            All Clients <span className="ml-2 rounded-2xl bg-[#D6D6D6] p-1"> {counts.all}</span>
+            All Clients <span className={cn("ml-2 rounded-2xl p-1 px-1.5",activeTab === "all" ? "bg-[#5FAE2E]/40":"bg-[#D6D6D6] ")}>{counts.all}</span>
           </button>
           <button
             onClick={() => setActiveTab("active")}
@@ -264,7 +177,7 @@ const counts = {
               activeTab === "active" ? "bg-[#a7e55c] text-[#121212]" : "bg-[#e2e2e2] text-[#667085]",
             )}
           >
-            Active <span className="ml-2 rounded-2xl bg-[#D6D6D6] p-1"> {counts.active}</span>
+            Active <span className={cn("ml-2 rounded-2xl p-1 px-1.5",activeTab === "active" ? "bg-[#5FAE2E]/40":"bg-[#D6D6D6] ")}> {counts.active}</span>
           </button>
           <button
             onClick={() => setActiveTab("inactive")}
@@ -273,7 +186,7 @@ const counts = {
               activeTab === "inactive" ? "bg-[#a7e55c] text-[#121212]" : "bg-[#e2e2e2] text-[#667085]",
             )}
           >
-            In-Active <span className="ml-2 rounded-2xl bg-[#D6D6D6] p-1"> {counts.inactive}</span>
+            In-Active <span className={cn("ml-2 rounded-2xl p-1 px-1.5",activeTab === "inactive" ? "bg-[#5FAE2E]/40":"bg-[#D6D6D6] ")}> {counts.inactive}</span>
           </button>
           <button
             onClick={() => setActiveTab("review")}
@@ -282,7 +195,7 @@ const counts = {
               activeTab === "review" ? "bg-[#a7e55c] text-[#121212]" : "bg-[#e2e2e2] text-[#667085]",
             )}
           >
-            Review <span className="ml-2 rounded-2xl bg-[#D6D6D6] p-1"> {counts.review}</span>
+            Review <span className={cn("ml-2 rounded-2xl p-1 px-1.5",activeTab === "review" ? "bg-[#5FAE2E]/40":"bg-[#D6D6D6] ")}> {counts.review}</span>
           </button>
           <button
             onClick={() => setActiveTab("kycpending")}
@@ -291,7 +204,7 @@ const counts = {
               activeTab === "kycpending" ? "bg-[#a7e55c] text-[#121212]" : "bg-[#e2e2e2] text-[#667085]",
             )}
           >
-            KYC Pending <span className="ml-2 rounded-2xl bg-[#D6D6D6] p-1"> {counts.kycpending}</span>
+            KYC Pending <span className={cn("ml-2 rounded-2xl p-1 px-1.5",activeTab === "kycpending" ? "bg-[#5FAE2E]/40":"bg-[#D6D6D6] ")}> {counts.kycpending}</span>
           </button>
           <button
             onClick={() => setActiveTab("riskprofile")}
@@ -301,7 +214,7 @@ const counts = {
             )}
           >
             Risk Profile
-             <span className="ml-2 rounded-2xl bg-[#D6D6D6] p-1"> {counts.riskprofile}</span>
+            <span className={cn("ml-2 rounded-2xl p-1 px-1.5",activeTab === "riskprofile" ? "bg-[#5FAE2E]/40":"bg-[#D6D6D6] ")}> {counts.riskprofile}</span>
           </button>
         </div>
         <div className="bg-white rounded-2xl border border-[#eaecf0] overflow-hidden">
